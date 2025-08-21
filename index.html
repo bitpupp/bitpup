@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>BitPup Runner</title>
+  <style>
+    body {
+      margin: 0;
+      padding-top: 60px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: url('solana-logo.png') center/cover no-repeat;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* Banner */
+    #banner {
+      width: 100%;
+      text-align: center;
+      padding: 12px 0;
+      font-size: 28px;
+      font-weight: bold;
+      font-family: "Arial Black", sans-serif; /* fallback font */
+      color: black;
+      -webkit-text-stroke: 1px white;
+      background: linear-gradient(90deg, #9945FF, #14F195, #00FFA3);
+      border-bottom: 2px solid black;
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 20;
+    }
+
+    #gameContainer {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    canvas {
+      border: 2px solid black;
+      background: transparent;
+      display: block;
+      margin: auto;
+      touch-action: none; /* prevent zoom/pan */
+    }
+
+    /* Restart button overlay */
+    #restartBtn {
+      position: absolute;
+      display: none;
+      padding: 14px 32px; /* bigger tap size */
+      font-size: 20px;
+      font-weight: bold;
+      background: #444;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      text-align: center;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    /* Bottom quote + image container */
+    #bottomSection {
+      display: flex;
+      flex-direction: row;
+      align-items: center;     /* vertical center alignment */
+      justify-content: center;
+      margin-top: 20px;
+      gap: 30px;
+      max-width: 90%;
+      text-align: center;
+      flex-wrap: wrap; /* wrap on small screens */
+    }
+
+    #bottomSection p {
+      font-family: "Courier New", monospace;
+      font-size: clamp(14px, 3vw, 20px); /* responsive font */
+      font-style: italic;
+      color: #f7931a;
+      -webkit-text-stroke: 0.04px #f7931a;
+      margin: 0;
+      max-width: 600px;
+    }
+
+    #bottomSection img {
+      width: 180px;
+      height: auto;
+      max-width: 40vw; /* scale on mobile */
+    }
+
+    /* Contract address */
+    #contractText {
+      position: fixed;
+      bottom: 5px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: "Courier New", monospace;
+      font-size: clamp(12px, 2.5vw, 16px); /* responsive size */
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <div id="banner">BITPUP</div>
+
+  <div id="gameContainer">
+    <canvas id="gameCanvas"></canvas>
+    <button id="restartBtn">Restart</button>
+  </div>
+
+  <!-- Bottom Section -->
+  <div id="bottomSection">
+    <p>
+      BitPup runs on proof-of-zoomies—fueled by belly rubs, secured by tail wags.
+      Bitcoin gave him the bone, Solana gave him the speed, and now he’s fetching the moon.
+    </p>
+    <img src="Bitpup2.png" alt="BitPup Image">
+  </div>
+
+  <div id="contractText">Contract address: 08.29.25;12:00PM UTC</div>
+
+  <script>
+    const canvas = document.getElementById("gameCanvas");
+    const ctx = canvas.getContext("2d");
+    const restartBtn = document.getElementById("restartBtn");
+
+    function resizeCanvas() {
+      canvas.width = Math.min(window.innerWidth * 0.95, 1000);
+      canvas.height = Math.min(canvas.width * 0.35, window.innerHeight * 0.7);
+    }
+    resizeCanvas();
+    window.addEventListener("resize", resizeCanvas);
+
+    let gameSpeed = 4;
+    let gravity = 0.6;
+    let gameOver = false;
+    let gameStarted = false;
+
+    // --- Assets ---
+    const pupImg = new Image();
+    pupImg.src = "bitpup.png";
+    const coinImg = new Image();
+    coinImg.src = "bitcoin_paw.png";
+
+    const jumpSound = new Audio("jump.mp3");
+    const coinSound = new Audio("coin.mp3");
+
+    let pup = { x: 50, y: 0, width: 60, height: 60, dy: 0, jumping: false };
+    let obstacles = [];
+    let coins = [];
+    let score = 0;
+    let highScore = localStorage.getItem("bitpupHighScore") || 0;
+    let frame = 0;
+
+    let obstacleSpawnRate = 150;
+    let coinSpawnRate = 100;
+
+    let sparkles = [];
+    let popUps = [];
+
+    function resetGame() {
+      score = 0;
+      obstacles = [];
+      coins = [];
+      sparkles = [];
+      popUps = [];
+      pup.height = canvas.height * 0.15;
+      pup.width = pup.height;
+      pup.y = canvas.height - pup.height;
+      pup.dy = 0;
+      pup.jumping = false;
+      frame = 0;
+      gameSpeed = 4;
+      obstacleSpawnRate = 150;
+      coinSpawnRate = 100;
+      gameOver = false;
+      gameStarted = false;
+      restartBtn.style.display = "none";
+      drawStartScreen();
+    }
+
+    function drawStartScreen() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "black";
+      ctx.font = `bold ${canvas.width / 20}px "Comic Sans MS", sans-serif`;
+      ctx.lineWidth = 3;
+      ctx.strokeStyle = "white";
+      ctx.strokeText("BitPup Runner", canvas.width / 2 - 140, canvas.height / 2 - 30);
+      ctx.fillText("BitPup Runner", canvas.width / 2 - 140, canvas.height / 2 - 30);
+
+      ctx.font = `bold ${canvas.width / 30}px "Comic Sans MS", sans-serif`;
+      ctx.strokeText("Tap to Start (or press Space/↑)", canvas.width / 2 - 160, canvas.height / 2 + 20);
+      ctx.fillText("Tap to Start (or press Space/↑)", canvas.width / 2 - 160, canvas.height / 2 + 20);
+    }
+
+    function drawFloor() {
+      ctx.fillStyle = "black";
+      ctx.fillRect(0, canvas.height - 5, canvas.width, 5);
+      ctx.lineWidth = canvas.width * 0.001;
+      ctx.strokeStyle = "white";
+      ctx.strokeRect(0, canvas.height - 5, canvas.width, 5);
+    }
+
+    function drawPup() {
+      let bob = (!pup.jumping) ? Math.sin(frame * 0.2) * 5 : 0;
+      ctx.drawImage(pupImg, pup.x, pup.y + bob, pup.width, pup.height);
+    }
+
+    function drawObstacles() {
+      obstacles.forEach(o => {
+        ctx.fillStyle = "black";
+        ctx.fillRect(o.x, o.y, o.width, o.height);
+        ctx.lineWidth = canvas.width * 0.001;
+        ctx.strokeStyle = "white";
+        ctx.strokeRect(o.x, o.y, o.width, o.height);
+      });
+    }
+
+    function drawCoins() {
+      coins.forEach(c => {
+        ctx.save();
+        ctx.shadowColor = "gold";
+        ctx.shadowBlur = 40;
+        ctx.drawImage(coinImg, c.x - c.radius, c.y - c.radius, c.radius * 2, c.radius * 2);
+        ctx.restore();
+      });
+    }
+
+    function drawEffects() {
+      sparkles.forEach((s, i) => {
+        ctx.fillStyle = `rgba(255, 215, 0, ${s.alpha})`;
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
+        ctx.fill();
+        s.x += s.dx;
+        s.y += s.dy;
+        s.alpha -= 0.02;
+        if (s.alpha <= 0) sparkles.splice(i, 1);
+      });
+
+      popUps.forEach((p, i) => {
+        ctx.fillStyle = "black";
+        ctx.font = `bold ${canvas.width / 40}px "Comic Sans MS", sans-serif`;
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = "white";
+        ctx.strokeText("+1", p.x, p.y);
+        ctx.fillText("+1", p.x, p.y);
+        p.y -= 1;
+        p.alpha -= 0.02;
+        if (p.alpha <= 0) popUps.splice(i, 1);
+      });
+    }
+
+    function updateObstacles() {
+      if (frame % obstacleSpawnRate === 0) {
+        let height = canvas.height * 0.1 + Math.random() * canvas.height * 0.1;
+        obstacles.push({ x: canvas.width, y: canvas.height - height, width: 30, height: height });
+      }
+      obstacles.forEach((o, i) => {
+        o.x -= gameSpeed;
+        if (o.x + o.width < 0) obstacles.splice(i, 1);
+        if (pup.x < o.x + o.width && pup.x + pup.width > o.x && pup.y + pup.height > o.y) {
+          gameOver = true;
+        }
+      });
+    }
+
+    function updateCoins() {
+      if (frame % coinSpawnRate === 0) {
+        let radius = canvas.height * 0.05;
+        coins.push({ x: canvas.width, y: canvas.height - pup.height - 40 - Math.random() * 60, radius });
+      }
+      coins.forEach((c, i) => {
+        c.x -= gameSpeed;
+        if (c.x + c.radius < 0) coins.splice(i, 1);
+        let dx = (pup.x + pup.width / 2) - c.x;
+        let dy = (pup.y + pup.height / 2) - c.y;
+        if (Math.sqrt(dx * dx + dy * dy) < pup.width / 2 + c.radius) {
+          coins.splice(i, 1);
+          score++;
+          coinSound.currentTime = 0;
+          coinSound.play().catch(()=>{});
+          for (let j = 0; j < 8; j++) {
+            sparkles.push({
+              x: c.x,
+              y: c.y,
+              dx: (Math.random()-0.5)*4,
+              dy: (Math.random()-0.5)*4,
+              size: 2+Math.random()*3,
+              alpha: 1
+            });
+          }
+          popUps.push({ x: c.x, y: c.y - 20, alpha: 1 });
+        }
+      });
+    }
+
+    function drawScore() {
+      ctx.fillStyle = "black";
+      ctx.font = `bold ${canvas.width / 40}px "Comic Sans MS", sans-serif`;
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = "white";
+      ctx.strokeText("Score: " + score, 10, 30);
+      ctx.fillText("Score: " + score, 10, 30);
+      ctx.strokeText("High Score: " + highScore, 10, 60);
+      ctx.fillText("High Score: " + highScore, 10, 60);
+    }
+
+    function gameLoop() {
+      if (gameOver) {
+        if (score > highScore) {
+          highScore = score;
+          localStorage.setItem("bitpupHighScore", highScore);
+        }
+        ctx.fillStyle = "black";
+        ctx.font = `bold ${canvas.width / 25}px "Comic Sans MS", sans-serif`;
+        ctx.lineWidth = 3;
+        ctx.strokeStyle = "white";
+        let text = "Game Over!";
+        let textWidth = ctx.measureText(text).width;
+        let textX = (canvas.width - textWidth) / 2;
+        let textY = canvas.height / 2;
+        ctx.strokeText(text, textX, textY);
+        ctx.fillText(text, textX, textY);
+
+        // Center restart button inside canvas
+        restartBtn.style.display = "block";
+        restartBtn.style.top = (canvas.getBoundingClientRect().top + textY + 30) + "px";
+        return;
+      }
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      drawFloor();
+      drawPup();
+      drawObstacles();
+      drawCoins();
+      drawEffects();
+      drawScore();
+      pup.y += pup.dy;
+      if (pup.y + pup.height < canvas.height) {
+        pup.dy += gravity;
+      } else {
+        pup.y = canvas.height - pup.height;
+        pup.dy = 0;
+        pup.jumping = false;
+      }
+      updateObstacles();
+      updateCoins();
+      if (frame % 500 === 0) {
+        gameSpeed += 0.5;
+        if (obstacleSpawnRate > 60) obstacleSpawnRate -= 10;
+        if (coinSpawnRate > 40) coinSpawnRate -= 5;
+      }
+      frame++;
+      requestAnimationFrame(gameLoop);
+    }
+
+    function jump() {
+      if (!gameStarted) {
+        gameStarted = true;
+        requestAnimationFrame(gameLoop);
+      }
+      if (!pup.jumping && !gameOver) {
+        pup.dy = -canvas.height * 0.04;
+        pup.jumping = true;
+        jumpSound.currentTime = 0;
+        jumpSound.play().catch(()=>{});
+      }
+    }
+
+    document.addEventListener("keydown", e => {
+      if (e.code === "Space" || e.code === "ArrowUp") jump();
+    });
+    canvas.addEventListener("touchstart", (e) => {
+      e.preventDefault();
+      jump();
+    }, { passive: false });
+    restartBtn.addEventListener("click", resetGame);
+
+    let assetsLoaded = 0;
+    [pupImg, coinImg].forEach(img => {
+      img.onload = () => {
+        assetsLoaded++;
+        if (assetsLoaded === 2) resetGame();
+      };
+    });
+  </script>
+</body>
+</html>
