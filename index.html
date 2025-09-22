@@ -3,6 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <title>BitPup Runner</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&display=swap" rel="stylesheet">
+	
   <style>
     body {
       margin: 0;
@@ -111,7 +114,7 @@
       max-width: 1100px;
       margin: 40px auto;
       padding: 20px;
-      font-family: "Comic Sans MS", sans-serif;
+      font-family: "Comic Sans MS", "Comic Neue", cursive;
       color: black;
       background: rgba(255,255,255,0.9);
       border-radius: 12px;
@@ -241,7 +244,7 @@
     <p>$BPUP. No sleep. Just memes.</p>
   </div>
 
-  <div id="contractText">Contract address: 09.25.25-6:00PM UTC @bitpupsol</div>
+  <div id="contractText">Contract address: 09.30.25-6:00PM UTC @bitpupsol</div>
 
   <!-- Game Script -->
   <script>
@@ -287,11 +290,11 @@
     function drawStartScreen() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.fillStyle = "black";
-      ctx.font = `bold ${canvas.width / 20}px "Comic Sans MS", sans-serif`;
+      ctx.font = `bold ${canvas.width / 20}px "Comic Sans MS", "Comic Neue", cursive`;
       ctx.lineWidth = 3; ctx.strokeStyle = "white";
       ctx.strokeText("BitPup Runner", canvas.width / 2 - 140, canvas.height / 2 - 30);
       ctx.fillText("BitPup Runner", canvas.width / 2 - 140, canvas.height / 2 - 30);
-      ctx.font = `bold ${canvas.width / 30}px "Comic Sans MS", sans-serif`;
+      ctx.font = `bold ${canvas.width / 30}px "Comic Sans MS", "Comic Neue", cursive`;
       ctx.strokeText("Tap to Start (or press Space/↑)", canvas.width / 2 - 160, canvas.height / 2 + 20);
       ctx.fillText("Tap to Start (or press Space/↑)", canvas.width / 2 - 160, canvas.height / 2 + 20);
     }
@@ -303,7 +306,7 @@
 
     function drawEffects() {
       sparkles.forEach((s, i) => { ctx.fillStyle = `rgba(255, 215, 0, ${s.alpha})`; ctx.beginPath(); ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2); ctx.fill(); s.x += s.dx; s.y += s.dy; s.alpha -= 0.02; if (s.alpha <= 0) sparkles.splice(i, 1); });
-      popUps.forEach((p, i) => { ctx.fillStyle = "black"; ctx.font = `bold ${canvas.width / 40}px "Comic Sans MS", sans-serif`; ctx.lineWidth = 2; ctx.strokeStyle = "white"; ctx.strokeText("+1", p.x, p.y); ctx.fillText("+1", p.x, p.y); p.y -= 1; p.alpha -= 0.02; if (p.alpha <= 0) popUps.splice(i, 1); });
+      popUps.forEach((p, i) => { ctx.fillStyle = "black"; ctx.font = `bold ${canvas.width / 40}px "Comic Sans MS", "Comic Neue", cursive`; ctx.lineWidth = 2; ctx.strokeStyle = "white"; ctx.strokeText("+1", p.x, p.y); ctx.fillText("+1", p.x, p.y); p.y -= 1; p.alpha -= 0.02; if (p.alpha <= 0) popUps.splice(i, 1); });
     }
 
     function updateObstacles() {
@@ -339,7 +342,7 @@
 
     function drawScore() {
       ctx.fillStyle = "black";
-      ctx.font = `bold ${canvas.width / 40}px "Comic Sans MS", sans-serif`;
+      ctx.font = `bold ${canvas.width / 40}px "Comic Sans MS", "Comic Neue", cursive`;
       ctx.lineWidth = 2; ctx.strokeStyle = "white";
       ctx.strokeText("Score: " + score, 10, 30); ctx.fillText("Score: " + score, 10, 30);
       ctx.strokeText("High Score: " + highScore, 10, 60); ctx.fillText("High Score: " + highScore, 10, 60);
@@ -349,7 +352,7 @@
       if (gameOver) {
         if (score > highScore) { highScore = score; localStorage.setItem("bitpupHighScore", highScore); }
         ctx.fillStyle = "black";
-        ctx.font = `bold ${canvas.width / 25}px "Comic Sans MS", sans-serif`;
+        ctx.font = `bold ${canvas.width / 25}px "Comic Sans MS", "Comic Neue", cursive`;
         ctx.lineWidth = 3; ctx.strokeStyle = "white";
         let text = "Game Over!"; let textWidth = ctx.measureText(text).width;
         let textX = (canvas.width - textWidth) / 2; let textY = canvas.height / 2;
@@ -396,4 +399,5 @@
 </body>
 
 </html>
+
 
