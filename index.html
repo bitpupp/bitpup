@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>BitPup Runner</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&display=swap" rel="stylesheet">
+	
+  <style>
+    body {
+      margin: 0;
+      padding-top: 60px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: url('background.png') center/cover no-repeat;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Banner */
+    #banner {
+      width: 100%;
+      text-align: center;
+      padding: 12px 0;
+      font-size: 28px;
+      font-weight: bold;
+      font-family: "Arial Black", sans-serif;
+      color: black;
+      -webkit-text-stroke: 1px white;
+      background: #F7931A;
+      border-bottom: 2px solid black;
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 20;
+    }
+
+    #gameContainer {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    canvas {
+      border: 2px solid black;
+      background: transparent;
+      display: block;
+      margin: auto;
+      touch-action: none;
+    }
+
+    /* Restart button overlay */
+    #restartBtn {
+      position: absolute;
+      display: none;
+      padding: 14px 32px;
+      font-size: 20px;
+      font-weight: bold;
+      background: #444;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      text-align: center;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    /* Bottom quote + image container */
+    #bottomSection {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      margin-top: 20px;
+      gap: 30px;
+      max-width: 90%;
+      text-align: center;
+      flex-wrap: wrap;
+    }
+
+    #bottomSection p {
+      font-family: "Courier New", monospace;
+      font-size: clamp(14px, 3vw, 20px);
+      font-style: italic;
+      color: #f7931a;
+      margin: 0;
+      max-width: 600px;
+    }
+
+    #bottomSection img {
+      width: 180px;
+      height: auto;
+      max-width: 40vw;
+    }
+
+/* Contract address */
+    #contractText {
+      margin: 15px auto;
+      text-align: center;
+      font-family: "Comic Sans MS", "Comic Neue", cursive;
+      font-size: clamp(14px, 2.5vw, 18px);
+      font-weight: bold;
+      color: black;
+      -webkit-text-stroke: 0.5px white;
+      z-index: 30;
+    }
+
+    /* Lore, Utility, Roadmap Section */
+    #infoSection {
+      max-width: 1100px;
+      margin: 40px auto;
+      padding: 20px;
+      font-family: "Comic Sans MS", "Comic Neue", cursive;
+      color: black;
+      background: rgba(255,255,255,0.9);
+      border-radius: 12px;
+      z-index: 10;
+    }
+
+    .infoBlock {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 20px;
+      margin-bottom: 40px;
+      flex-wrap: wrap;
+    }
+
+    .infoBlock .text {
+      flex: 1 1 60%;
+    }
+
+    .infoBlock .image {
+      flex: 1 1 35%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .infoBlock img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 10px;
+    }
+
+    h2 {
+      margin-top: 0;
+    }
+
+    #disclaimer {
+      font-family: "Courier New", monospace;
+      font-size: 12px;
+      text-align: center;
+      color: white;
+      margin: 40px 10px;
+    }
+  </style>
+</head>
+<body>
+  <div id="banner">BITPUP</div>
+
+  <div id="gameContainer">
+    <canvas id="gameCanvas"></canvas>
+    <button id="restartBtn">Restart</button>
+  </div>
+
+  <!-- Bottom Section -->
+  <div id="bottomSection">
+    <p>
+      Bitcoin gave me the dream. Solana gave me the speed. My coffee gave me life. Now, I'm busy chasing green candles.
+    </p>
+    <img src="Bitpup2.png" alt="BitPup Image">
+  </div>
+
+   <div id="contractText">Contract address: 12.10.25_12:00PM UTC @bitpupsol</div>
+
+  <!-- Lore, Utility, Roadmap -->
+  <section id="infoSection">
+
+    <!-- LORE -->
+    <div class="infoBlock loreBlock">
+      <div class="text">
+        <h2><b>🐶 BitPup: The Legend of the Sleepless Doge Cousin</b></h2>
+        <p>Once upon a blockchain, there was a scrappy little dog named BitPup. Unlike his famous cousin Doge, who just barked at the moon and printed money for people who forgot their wallet passwords, BitPup was raised in the trenches of red candles, rug pulls, and endless “dip keeps dipping” moments.</p>
+        <p>BitPup isn’t your average meme coin mascot, he’s the sleep-deprived trader spirit animal.</p>
+        <p>He chases charts the way normal dogs chase cars.<br>He fetches liquidity, but it usually vanishes before he gets back.<br>And every night, while other dogs dream, BitPup stares at DexScreener, asking himself why he bought the top…again.</p>
+        <p>They say BitPup was born the moment a trader hit “market buy” at 3 AM after 8 cups of coffee and zero hours of sleep. His bark? It sounds exactly like a liquidation notification. His favorite game? “HODL until zero.”</p>
+        <p>But here’s the twist: BitPup is not about winning. He’s about surviving. He’s the meme coin that embraces every trader’s pain, the negative PnLs, the sleepless nights, the “bro trust me this is the bottom” lies.</p>
+        <p>Because while other tokens promise Lambos, BitPup promises something far more realistic:<br>👉 a community of bagholders laughing through the pain together.</p>
+      </div>
+      <div class="image">
+        <img src="lore.png" alt="BitPup Lore">
+      </div>
+    </div>
+
+    <!-- UTILITY -->
+    <div class="infoBlock utilityBlock">
+      <div class="image">
+        <img src="utility.png" alt="BitPup Utility">
+      </div>
+      <div class="text">
+        <h2><b>🐶 BitPup Utility (aka Useless-but-Relatable Features)</b></h2>
+	<p>At BitPup, we believe meme coins don’t need real utility…but that won’t stop us from pretending we have some. Below are the world-class, revolutionary, and completely worthless features that make BitPup the #1 coin for sleep-deprived traders.</p>
+        <ul>
+          <li><b>Sleepless Staking</b> – Lock up your BitPup tokens and earn absolutely nothing, except dark circles under your eyes and a deep regret for ever entering crypto. The longer you stake, the worse your sleep schedule gets.</li>
+          <li><b>Rug Radar™</b> – BitPup barks whenever you’re about to ape into a rug pull. The catch? He barks 24/7 because let’s be real, everything is a rug eventually.</li>
+          <li><b>Buy-High / Sell-Low Bot</b> – Automated trading bot that mimics your natural trading instincts: buying the exact top and panic-selling the exact bottom. Finally, technology that understands you.</li>
+          <li><b>PnL Therapy</b> – Link your wallet, and BitPup calculates how much you’ve lost. Then he laughs at you to remind you it’s “all part of the process.” Free therapy, zero recovery.</li>
+          <li><b>Insomnia-to-Earn</b> – Stay awake staring at charts all night. Instead of rewards, you just get eye bags and a new best friend called anxiety.</li>
+          <li><b>Hopium Dispenser</b> – Click a button and BitPup will whisper the magic words: “bro trust me, this is the bottom.” The feature refreshes every 15 minutes, since bottoms have infinite layers.</li>
+          <li><b>Liquidation Alerts</b> – Whenever your margin trade goes bust, BitPup howls at the moon in honor of your loss. Consider it blockchain’s first ever funeral service for degen traders.</li>
+          <li><b>Rekt-to-Earn</b> – The only ranking system where losing money makes you a winner. The bigger your losses, the higher your leaderboard spot. Top players get nothing, not even respect.</li>
+        </ul>
+        <p>🐾 BitPup doesn’t promise riches, Lambos, or financial freedom.<br>👉 He’s here to laugh at your portfolio with you.</p>
+      </div>
+    </div>
+
+    <!-- ROADMAP -->
+    <div class="infoBlock roadmapBlock">
+      <div class="text">
+        <h2><b>🐶 BitPup Official Roadmap</b></h2>
+	<p>At BitPup, we take roadmaps very seriously…in the same way traders take stop-losses (aka we don’t). Here’s the future of nothingness:</p>
+        <p><b>PHASE 1 – The Awakening</b><br>Launch token with no utility, no plan, and no sleep.<br>Release “Hopium Dispenser” so bagholders stop crying for at least 5 minutes.<br>Partner with coffee brands, since our holders don’t sleep anyway.</p>
+        <p><b>PHASE 2 – Peak Delusion</b><br>Deploy Buy-High / Sell-Low Bot to automate your bad decisions.<br>Sleepless Staking: stake BitPup, earn insomnia.<br>Publish a 97-page “whitepaper” written entirely in Comic Sans.</p>
+        <p><b>PHASE 3 – Maximum Rektness</b><br>Expand Rug Radar™ which now barks at literally everything.<br>Launch BitPup NFTs — each one a screenshot of your negative PnL.<br>Partner with melatonin companies, since holders still can’t sleep..</p>
+        <p><b>PHASE 4 – Acceptance & Copium</b><br>Rekt-to-Earn Leaderboards: finally rewarding people who lose the most money.<br>Begin PnL Therapy sessions, where BitPup laughs at your portfolio in soothing ASMR.<br>Official community event: a 24-hour livestream of BitPup staring at red candles with you.</p>
+        <p><b>Future Vision (aka Never Happening)</b><br>“BitPup to the moon” campaign…ending with BitPup buried in crater-sized liquidity holes.<br>World’s first Sleep-to-Earn program…except you never get to use it, because crypto never sleeps.<br>Partnership with Elon…or maybe just a random guy named Elon we found on Telegram.</p>
+        <p>🐾 Final Note:<br>BitPup doesn’t promise Lambos, moons, or riches. Only red candles, sarcasm, and sleepless nights as one big broke family.</p>
+      </div>
+      <div class="image">
+        <img src="roadmap.png" alt="BitPup Roadmap">
+      </div>
+    </div>
+
+  </section>
+
+  <!-- Disclaimer -->
+  <div id="disclaimer">
+    <p>Disclaimer: all things mentioned on this website are for entertainment purposes only.</p>
+    <p>BitPup is a memecoin with no intrinsic value, no real utilities, and no roadmap.</p>    
+    <p>$BPUP. No sleep. Just memes.</p>
+  </div>
+
+  <!-- Game Script -->
+  <script>
+    const canvas = document.getElementById("gameCanvas");
+    const ctx = canvas.getContext("2d");
+    const restartBtn = document.getElementById("restartBtn");
+
+    function resizeCanvas() {
+      canvas.width = Math.min(window.innerWidth * 0.95, 1000);
+      canvas.height = Math.min(canvas.width * 0.35, window.innerHeight * 0.7);
+    }
+    resizeCanvas();
+    window.addEventListener("resize", resizeCanvas);
+
+    let gameSpeed = 4;
+    let gravity = 0.6;
+    let gameOver = false;
+    let gameStarted = false;
+    let rafId = null; // <-- track the game loop
+
+    // --- Assets ---
+    const pupImg = new Image(); pupImg.src = "bitpup.png";
+    const coinImg = new Image(); coinImg.src = "bitcoin_paw.png";
+    const jumpSound = new Audio("jump.mp3");
+    const coinSound = new Audio("coin.mp3");
+
+    let pup = { x: 50, y: 0, width: 60, height: 60, dy: 0, jumping: false };
+    let obstacles = [], coins = [], sparkles = [], popUps = [];
+    let score = 0, highScore = localStorage.getItem("bitpupHighScore") || 0;
+    let frame = 0, obstacleSpawnRate = 150, coinSpawnRate = 100;
+
+    function resetGame() {
+      score = 0; obstacles = []; coins = []; sparkles = []; popUps = [];
+      pup.height = canvas.height * 0.15; pup.width = pup.height;
+      pup.y = canvas.height - pup.height; pup.dy = 0; pup.jumping = false;
+      frame = 0; gameSpeed = 4; obstacleSpawnRate = 150; coinSpawnRate = 100;
+      gameOver = false; gameStarted = false;
+      restartBtn.style.display = "none";
+      rafId = null; // reset loop tracker
+      drawStartScreen();
+    }
+
+    function drawStartScreen() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "black";
+      ctx.font = `bold ${canvas.width / 20}px "Comic Sans MS", "Comic Neue", cursive`;
+      ctx.lineWidth = 3; ctx.strokeStyle = "white";
+      ctx.strokeText("BitPup Runner", canvas.width / 2 - 140, canvas.height / 2 - 30);
+      ctx.fillText("BitPup Runner", canvas.width / 2 - 140, canvas.height / 2 - 30);
+      ctx.font = `bold ${canvas.width / 30}px "Comic Sans MS", "Comic Neue", cursive`;
+      ctx.strokeText("Tap to Start (or press Space/↑)", canvas.width / 2 - 160, canvas.height / 2 + 20);
+      ctx.fillText("Tap to Start (or press Space/↑)", canvas.width / 2 - 160, canvas.height / 2 + 20);
+    }
+
+    function drawFloor() { ctx.fillStyle = "black"; ctx.fillRect(0, canvas.height - 5, canvas.width, 5); ctx.lineWidth = canvas.width * 0.001; ctx.strokeStyle = "white"; ctx.strokeRect(0, canvas.height - 5, canvas.width, 5); }
+    function drawPup() { let bob = (!pup.jumping) ? Math.sin(frame * 0.2) * 5 : 0; ctx.drawImage(pupImg, pup.x, pup.y + bob, pup.width, pup.height); }
+    function drawObstacles() { obstacles.forEach(o => { ctx.fillStyle = "green"; ctx.fillRect(o.x, o.y, o.width, o.height); ctx.lineWidth = canvas.width * 0.001; ctx.strokeStyle = "white"; ctx.strokeRect(o.x, o.y, o.width, o.height); }); }
+    function drawCoins() { coins.forEach(c => { ctx.save(); ctx.shadowColor = "gold"; ctx.shadowBlur = 40; ctx.drawImage(coinImg, c.x - c.radius, c.y - c.radius, c.radius * 2, c.radius * 2); ctx.restore(); }); }
+
+    function drawEffects() {
+      sparkles.forEach((s, i) => { ctx.fillStyle = `rgba(255, 215, 0, ${s.alpha})`; ctx.beginPath(); ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2); ctx.fill(); s.x += s.dx; s.y += s.dy; s.alpha -= 0.02; if (s.alpha <= 0) sparkles.splice(i, 1); });
+      popUps.forEach((p, i) => { ctx.fillStyle = "black"; ctx.font = `bold ${canvas.width / 40}px "Comic Sans MS", "Comic Neue", cursive`; ctx.lineWidth = 2; ctx.strokeStyle = "white"; ctx.strokeText("+1", p.x, p.y); ctx.fillText("+1", p.x, p.y); p.y -= 1; p.alpha -= 0.02; if (p.alpha <= 0) popUps.splice(i, 1); });
+    }
+
+    function updateObstacles() {
+      if (frame % obstacleSpawnRate === 0) {
+        let height = canvas.height * 0.1 + Math.random() * canvas.height * 0.1;
+        obstacles.push({ x: canvas.width, y: canvas.height - height, width: 30, height: height });
+      }
+      obstacles.forEach((o, i) => {
+        o.x -= gameSpeed;
+        if (o.x + o.width < 0) obstacles.splice(i, 1);
+        if (pup.x < o.x + o.width && pup.x + pup.width > o.x && pup.y + pup.height > o.y) gameOver = true;
+      });
+    }
+
+    function updateCoins() {
+      if (frame % coinSpawnRate === 0) {
+        let radius = canvas.height * 0.05;
+        coins.push({ x: canvas.width, y: canvas.height - pup.height - 40 - Math.random() * 60, radius });
+      }
+      coins.forEach((c, i) => {
+        c.x -= gameSpeed;
+        if (c.x + c.radius < 0) coins.splice(i, 1);
+        let dx = (pup.x + pup.width / 2) - c.x;
+        let dy = (pup.y + pup.height / 2) - c.y;
+        if (Math.sqrt(dx * dx + dy * dy) < pup.width / 2 + c.radius) {
+          coins.splice(i, 1); score++;
+          coinSound.currentTime = 0; coinSound.play().catch(()=>{});
+          for (let j = 0; j < 8; j++) sparkles.push({ x: c.x, y: c.y, dx: (Math.random()-0.5)*4, dy: (Math.random()-0.5)*4, size: 2+Math.random()*3, alpha: 1 });
+          popUps.push({ x: c.x, y: c.y - 20, alpha: 1 });
+        }
+      });
+    }
+
+    function drawScore() {
+      ctx.fillStyle = "black";
+      ctx.font = `bold ${canvas.width / 40}px "Comic Sans MS", "Comic Neue", cursive`;
+      ctx.lineWidth = 2; ctx.strokeStyle = "white";
+      ctx.strokeText("Score: " + score, 10, 30); ctx.fillText("Score: " + score, 10, 30);
+      ctx.strokeText("High Score: " + highScore, 10, 60); ctx.fillText("High Score: " + highScore, 10, 60);
+    }
+
+    function gameLoop() {
+      if (gameOver) {
+        if (score > highScore) { highScore = score; localStorage.setItem("bitpupHighScore", highScore); }
+        ctx.fillStyle = "black";
+        ctx.font = `bold ${canvas.width / 25}px "Comic Sans MS", "Comic Neue", cursive`;
+        ctx.lineWidth = 3; ctx.strokeStyle = "white";
+        let text = "Game Over!"; let textWidth = ctx.measureText(text).width;
+        let textX = (canvas.width - textWidth) / 2; let textY = canvas.height / 2;
+        ctx.strokeText(text, textX, textY); ctx.fillText(text, textX, textY);
+        restartBtn.style.display = "block";
+        restartBtn.style.top = (canvas.getBoundingClientRect().top + textY + 30) + "px";
+        rafId = null; // stop loop
+        return;
+      }
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      drawFloor(); drawPup(); drawObstacles(); drawCoins(); drawEffects(); drawScore();
+      pup.y += pup.dy;
+      if (pup.y + pup.height < canvas.height) { pup.dy += gravity; }
+      else { pup.y = canvas.height - pup.height; pup.dy = 0; pup.jumping = false; }
+      updateObstacles(); updateCoins();
+      if (frame % 500 === 0) { gameSpeed += 0.5; if (obstacleSpawnRate > 60) obstacleSpawnRate -= 10; if (coinSpawnRate > 40) coinSpawnRate -= 5; }
+      frame++;
+      rafId = requestAnimationFrame(gameLoop);
+    }
+
+    function jump() {
+      if (!gameStarted) {
+        gameStarted = true;
+        if (!rafId) rafId = requestAnimationFrame(gameLoop); // only start once
+      }
+      if (!pup.jumping && !gameOver) {
+        pup.dy = -canvas.height * 0.04; pup.jumping = true;
+        jumpSound.currentTime = 0; jumpSound.play().catch(()=>{});
+      }
+    }
+
+    document.addEventListener("keydown", e => {
+  if (e.code === "Space" || e.code === "ArrowUp") {
+    e.preventDefault(); // stop page from scrolling
+    jump();
+  }
+});
+    canvas.addEventListener("touchstart", (e) => { e.preventDefault(); jump(); }, { passive: false });
+    restartBtn.addEventListener("click", resetGame);
+
+    let assetsLoaded = 0;
+    [pupImg, coinImg].forEach(img => { img.onload = () => { assetsLoaded++; if (assetsLoaded === 2) resetGame(); }; });
+  </script>
+</body>
+
+</html>
